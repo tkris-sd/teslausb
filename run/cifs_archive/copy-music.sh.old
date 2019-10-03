@@ -73,10 +73,3 @@ if [ $NUM_FILES_COPIED -gt 0 ]
 then
   /root/bin/send-push-message "TeslaUSB:" "Copied $NUM_FILES_COPIED music file(s), skipped $NUM_FILES_SKIPPED previously-copied files, encountered $NUM_FILES_ERROR errors."
 fi
-
-log "Copying music from Archive... using rsync for --delete"
-
-rsync -avH --stats --ignore-existing --exclude .DS_Store --exclude desktop.ini --exclude Thumbs.db --exclude \*.jpg --delete $SRC/ $DST > /mutable/music_rsync.log 2>&1
-
-Added=`grep "Number of" /mutable/music_rsync.log`
-log "Rsync complete, $Added"
