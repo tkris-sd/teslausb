@@ -158,6 +158,7 @@ function get_ancillary_setup_scripts () {
   get_script /tmp create-backingfiles.sh setup/pi
   get_script /tmp make-root-fs-readonly.sh setup/pi
   get_script /tmp configure.sh setup/pi
+  get_script /root/bin manual_update.sh setup/pi
 }
 
 function get_common_scripts () {
