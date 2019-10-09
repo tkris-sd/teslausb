@@ -57,7 +57,7 @@ function headless_setup_populate_variables () {
   }
   
   function curlwrapper () {
-  setup_progress "curl $@"
+  setup_progress "curl -q  $@"
   while ! curl --fail "$@"
   do
     setup_progress "'curl $@' failed, retrying" > /dev/null
@@ -74,23 +74,35 @@ function get_script () {
   chmod +x "$local_path/$name"
   setup_progress "Downloaded $local_path/$name ..."
 }
-function get_ancillary_setup_scripts () {
-  get_script /tmp create-backingfiles-partition.sh setup/pi
-  get_script /tmp create-backingfiles.sh setup/pi
-  get_script /tmp make-root-fs-readonly.sh setup/pi
-  get_script /tmp configure.sh setup/pi
-}
 
+SCRIPTLIST="enable_wifi.sh
+send-push-message
+send_sns.py
+archiveloop
+tesla_api.py
+archive-clips.sh
+connect-archive.sh
+disconnect-archive.sh
+write-archive-configs-to.sh
+archive-is-reachable.sh
+copy-music.sh" 
 function get_common_scripts () {
+for filename in $SCRIPTLIST; do
+  get_script /root/bin $filename run
+done
   get_script /root/bin remountfs_rw run
   get_script /root/bin make_snapshot.sh run
   get_script /root/bin mount_snapshot.sh run
   get_script /root/bin mount_image.sh run
   get_script /root/bin release_snapshot.sh run
+  
+  get_script /tmp create-backingfiles-partition.sh setup/pi
+  get_script /tmp create-backingfiles.sh setup/pi
+  get_script /tmp make-root-fs-readonly.sh setup/pi
+  get_script /tmp configure.sh setup/pi
   get_script /root/bin setup-teslausb setup/pi
   get_script /root/bin manual_update.sh setup/pi
 }
 
 get_common_scripts
 
-get_ancillary_setup_scripts
