@@ -31,6 +31,10 @@ SAMBA_GUEST=${SAMBA_GUEST:-false}
 export camsize=${camsize:-90%}
 export musicsize=${musicsize:-100%}
 export usb_drive=${usb_drive:-''}
+function setup_progress () {
+	echo $@
+}
+
 
 function headless_setup_populate_variables () {
   # Pull in the conf file variables to make avail to this script and subscripts
@@ -50,6 +54,8 @@ function headless_setup_populate_variables () {
       setup_progress "couldn't find config file"
     fi
   fi
+  }
+  
   function curlwrapper () {
   setup_progress "curl $@"
   while ! curl --fail "$@"
@@ -82,6 +88,7 @@ function get_common_scripts () {
   get_script /root/bin mount_image.sh run
   get_script /root/bin release_snapshot.sh run
   get_script /root/bin setup-teslausb setup/pi
+  get_script /root/bin manual_update.sh setup/pi
 }
 
 get_common_scripts
