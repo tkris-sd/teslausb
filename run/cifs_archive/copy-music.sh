@@ -44,6 +44,7 @@ Created=`grep "Number of created files:" $RsyncLog | cut -d: -f2`
 Deleted=`grep "Number of deleted files:" $RsyncLog | cut -d: -f2`
 if [ $Created -gt 0 ] || [ $Deleted -gt 0 ]; 
   then
+  log "Sending message"
   /root/bin/send-push-message "TeslaUSB Music Rsync:" "Copied $Created music file(s), removed $Deleted"
 fi
 
