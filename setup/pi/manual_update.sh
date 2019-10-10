@@ -10,7 +10,7 @@ function setup_progress () {
 
 
   function curlwrapper () {
-  setup_progress "curl -q  $@"
+  setup_progress "curl -s  $@"
   while ! curl --fail "$@"
   do
     setup_progress "'curl $@' failed, retrying" > /dev/null
