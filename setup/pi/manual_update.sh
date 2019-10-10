@@ -75,20 +75,26 @@ function get_script () {
   setup_progress "Downloaded $local_path/$name ..."
 }
 
-SCRIPTLIST="enable_wifi.sh
+
+
+function get_common_scripts () {
+  SCRIPTLIST="
 send-push-message
 send_sns.py
 archiveloop
 tesla_api.py
-archive-clips.sh
+"
+  for filename in $SCRIPTLIST; do
+    get_script /root/bin $filename run
+  done
+  SCRIPTLIST="archive-clips.sh
 connect-archive.sh
 disconnect-archive.sh
 write-archive-configs-to.sh
 archive-is-reachable.sh
 copy-music.sh" 
-function get_common_scripts () {
   for filename in $SCRIPTLIST; do
-    get_script /root/bin $filename run
+    get_script /root/bin $filename run/cifs_archive
   done
   get_script /root/bin remountfs_rw run
   get_script /root/bin make_snapshot.sh run
