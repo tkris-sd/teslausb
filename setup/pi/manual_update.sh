@@ -11,7 +11,7 @@ function setup_progress () {
 
   function curlwrapper () {
   setup_progress "curl -s  $@"
-  while ! curl --fail "$@"
+  while ! curl -s --fail "$@"
   do
     setup_progress "'curl $@' failed, retrying" > /dev/null
     sleep 3
