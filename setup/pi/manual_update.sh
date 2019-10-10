@@ -87,15 +87,14 @@ write-archive-configs-to.sh
 archive-is-reachable.sh
 copy-music.sh" 
 function get_common_scripts () {
-for filename in $SCRIPTLIST; do
-  get_script /root/bin $filename run
-done
+  for filename in $SCRIPTLIST; do
+    get_script /root/bin $filename run
+  done
   get_script /root/bin remountfs_rw run
   get_script /root/bin make_snapshot.sh run
   get_script /root/bin mount_snapshot.sh run
   get_script /root/bin mount_image.sh run
   get_script /root/bin release_snapshot.sh run
-  
   get_script /tmp create-backingfiles-partition.sh setup/pi
   get_script /tmp create-backingfiles.sh setup/pi
   get_script /tmp make-root-fs-readonly.sh setup/pi
