@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-
+/root/bin/remountfs_rw
 REPO=${REPO:-tkris-sd}
 BRANCH=${BRANCH:-main-dev}
 
@@ -38,6 +38,7 @@ function get_script () {
   get_script /root/bin archiveloop run
   get_script /root/bin tesla_api.py run
   get_script /root/bin remountfs_rw run
+  get_script /root/bin remountfs_ro run
   get_script /root/bin make_snapshot.sh run
   get_script /root/bin mount_snapshot.sh run
   get_script /root/bin mount_image.sh run
@@ -57,3 +58,4 @@ function get_script () {
   get_script /tmp create-backingfiles.sh setup/pi
   get_script /tmp make-root-fs-readonly.sh setup/pi
   get_script /tmp configure.sh setup/pi
+  /root/bin/remountfs_ro

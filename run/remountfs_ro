@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Remounting / as read/only"
+mount / -o remount,ro
+echo "Remounting /boot as read/only"
+mount /boot -o remount,ro
+echo "Done. root and boot are read only again"
