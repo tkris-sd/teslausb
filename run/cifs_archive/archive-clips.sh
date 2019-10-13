@@ -75,11 +75,35 @@ function moveclips() {
 
 connectionmonitor $$ &
 
-# new file name pattern, firmware 2019.*
-moveclips "$CAM_MOUNT/TeslaCam/SavedClips" '*'
+if [ -z "$CIFS_Use_Rsync" ];
+  then
+	# new file name pattern, firmware 2019.*
+	moveclips "$CAM_MOUNT/TeslaCam/SavedClips" '*'
 
-# v10 firmware adds a SentryClips folder
-moveclips "$CAM_MOUNT/TeslaCam/SentryClips" '*'
+	# v10 firmware adds a SentryClips folder
+	moveclips "$CAM_MOUNT/TeslaCam/SentryClips" '*'
+  else
+    log "Copying Sentry and Saved clips to Archive... using rsync"
+	RsyncLog=/mutable/archive_rsync.log
+	rsync -avH --stats --ignore-existing $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips $ARCHIVE_MOUNT > $RsyncLog 2>&1
+	if [ $? == 0 ]; 
+	  then
+	    /bin/rm -rf $CAM_MOUNT/TeslaCam/SavedClips/* 
+	  else
+	    log "Not removing SavedClips, rsync did not exit clean. Check Yo Space."
+		/root/bin/send-push-message "TeslaUSB Rsync:" "Not removing SavedClips after rsync - Check your space"
+	fi
+	
+	Added=`grep "Number of" $RsyncLog`
+	log "Rsync complete, $Added"
+	Created=`grep "Number of created files:" $RsyncLog | cut -d: -f2`
+	Deleted=`grep "Number of deleted files:" $RsyncLog | cut -d: -f2`
+	if [ $Created -gt 0 ] || [ $Deleted -gt 0 ]; 
+	  then
+	  log "Sending message"
+	  /root/bin/send-push-message "TeslaUSB Archive Rsync:" "Copied $Created file(s), removed $Deleted"
+	fi
+  fi
 
 kill %1
 
