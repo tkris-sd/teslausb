@@ -82,12 +82,19 @@ if [ -z "$CIFS_Use_Rsync" ];
 
 	# v10 firmware adds a SentryClips folder
 	moveclips "$CAM_MOUNT/TeslaCam/SentryClips" '*'
+	log "Moved $NUM_FILES_MOVED file(s), failed to copy $NUM_FILES_FAILED, deleted $NUM_FILES_DELETED."
+
+	if [ $NUM_FILES_MOVED -gt 0 ]
+	then
+	  /root/bin/send-push-message "TeslaUSB:" "Moved $NUM_FILES_MOVED dashcam file(s), failed to copy $NUM_FILES_FAILED, deleted $NUM_FILES_DELETED."
+	fi
   else
     log "Copying Sentry and Saved clips to Archive... using rsync"
 	RsyncLog=/mutable/archive_rsync.log
 	# make sure both the sub dirs exist so rsync does not hit an error.
 	mkdir -p $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips > /dev/null 2>&1
 	rsync -avH --stats --ignore-existing $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips $ARCHIVE_MOUNT > $RsyncLog 2>&1
+	
 	if [ $? == 0 ]; 
 	  then
 	    /bin/rm -rf $CAM_MOUNT/TeslaCam/SavedClips/* 
@@ -100,7 +107,8 @@ if [ -z "$CIFS_Use_Rsync" ];
 	log "Rsync complete, $Added"
 	Created=`grep "Number of created files:" $RsyncLog | cut -d: -f2`
 	Deleted=`grep "Number of deleted files:" $RsyncLog | cut -d: -f2`
-	if [ $Created -gt 0 ] || [ $Deleted -gt 0 ]; 
+	TotalFilesChanged=$(($Created + $Deleted))
+	if [ $TotalFilesChanged -gt 0 ]; 
 	  then
 	  log "Sending message"
 	  /root/bin/send-push-message "TeslaUSB Archive Rsync:" "Copied $Created file(s), removed $Deleted"
@@ -112,11 +120,6 @@ kill %1
 # delete empty directories under SavedClips and SentryClips
 rmdir --ignore-fail-on-non-empty "$CAM_MOUNT/TeslaCam/SavedClips"/* "$CAM_MOUNT/TeslaCam/SentryClips"/* || true
 
-log "Moved $NUM_FILES_MOVED file(s), failed to copy $NUM_FILES_FAILED, deleted $NUM_FILES_DELETED."
 
-if [ $NUM_FILES_MOVED -gt 0 ]
-then
-  /root/bin/send-push-message "TeslaUSB:" "Moved $NUM_FILES_MOVED dashcam file(s), failed to copy $NUM_FILES_FAILED, deleted $NUM_FILES_DELETED."
-fi
 
 log "Finished moving clips to archive."
