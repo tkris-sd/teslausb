@@ -299,7 +299,7 @@ function archive_teslacam_clips () {
             fi
         fi
 
-        /root/bin/archive-clips.sh
+        /root/bin/archive-clips.sh &>> ${LOG_FILE}
 
         # If Sentry Mode was previously disabled, restore it to that state
         if [ -x /root/bin/tesla_api.py ]
@@ -312,19 +312,19 @@ function archive_teslacam_clips () {
 	fi
     fi
 
-    unmount_cam_file
+    unmount_cam_file &>> ${LOG_FILE}
 }
 
 function copy_music_files () {
   log "Starting music sync..."
 
-  ensure_music_file_is_mounted
+  ensure_music_file_is_mounted &>> ${LOG_FILE}
 
-  fix_errors_in_music_file
+  fix_errors_in_music_file &>> ${LOG_FILE}
 
-  /root/bin/copy-music.sh
+  /root/bin/copy-music.sh &>> ${LOG_FILE}
 
-  unmount_music_file
+  unmount_music_file &>> ${LOG_FILE}
 }
 
 function archive_clips () {
@@ -359,9 +359,9 @@ function archive_clips () {
     log "Music archive not configured or unreachable"
   fi
 
-  /root/bin/disconnect-archive.sh
+  /root/bin/disconnect-archive.sh &>> ${LOG_FILE}
 
-  connect_usb_drives_to_host
+  connect_usb_drives_to_host &>> ${LOG_FILE}
 }
 
 function truncate_log () {
@@ -464,7 +464,7 @@ function snapshotloop {
   while true
   do
     sleep 3500
-    /root/bin/make_snapshot.sh
+    /root/bin/make_snapshot.sh &>> ${LOG_FILE}
   done
 }
 
@@ -478,11 +478,11 @@ export -f log
 echo "==============================================" >> "$LOG_FILE"
 log "Starting archiveloop..."
 
-mount_all_snapshots
+mount_all_snapshots &>> ${LOG_FILE}
 
-/root/bin/make_snapshot.sh
+/root/bin/make_snapshot.sh &>> ${LOG_FILE}
 
-snapshotloop &
+snapshotloop  &>> ${LOG_FILE} &
 
 if archive_is_reachable
 then
@@ -493,7 +493,7 @@ then
   # archive_clips will fix errors in the cam file
   mount_and_fix_errors_in_music_file
 
-  archive_clips
+  archive_clips &>> ${LOG_FILE}
 
   doubleblink
 
@@ -501,16 +501,16 @@ then
 else
   slowblink
 
-  mount_and_fix_errors_in_files
+  mount_and_fix_errors_in_files &>> ${LOG_FILE}
 
-  connect_usb_drives_to_host
+  connect_usb_drives_to_host &>> ${LOG_FILE}
 fi
 
 while [ true ]
 do
   slowblink
 
-  wait_for_archive_to_be_reachable
+  wait_for_archive_to_be_reachable &>> ${LOG_FILE}
 
   fastblink
 
@@ -521,13 +521,13 @@ do
   # take a snapshot before archive_clips starts deleting files
   /root/bin/make_snapshot.sh
 
-  archive_clips
+  archive_clips &>> ${LOG_FILE}
 
-  truncate_log
+  truncate_log &>> ${LOG_FILE}
 
   doubleblink
 
-  wait_for_archive_to_be_unreachable
+  wait_for_archive_to_be_unreachable &>> ${LOG_FILE}
 
-  check_if_usb_gadget_is_mounted
+  check_if_usb_gadget_is_mounted &>> ${LOG_FILE}
 done
