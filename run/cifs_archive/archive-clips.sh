@@ -85,6 +85,8 @@ if [ -z "$CIFS_Use_Rsync" ];
   else
     log "Copying Sentry and Saved clips to Archive... using rsync"
 	RsyncLog=/mutable/archive_rsync.log
+	# make sure both the sub dirs exist so rsync does not hit an error.
+	mkdir -p $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips > /dev/null 2>&1
 	rsync -avH --stats --ignore-existing $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips $ARCHIVE_MOUNT > $RsyncLog 2>&1
 	if [ $? == 0 ]; 
 	  then
