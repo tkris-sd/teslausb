@@ -25,6 +25,7 @@ function get_script () {
 
   curlwrapper -o "$local_path/$name" https://raw.githubusercontent.com/"$REPO"/teslausb/"$BRANCH"/"$remote_path"/"$name"
   chmod +x "$local_path/$name"
+  dos2unix "$local_path/$name
   #setup_progress "Downloaded $local_path/$name ..."
 }
 
