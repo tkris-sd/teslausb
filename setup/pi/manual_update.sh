@@ -1,6 +1,8 @@
 #!/bin/bash -eu
 
 /root/bin/remountfs_rw
+TempDir=/tmp/manual_update
+mkdir -p $TempDir
 REPO=${REPO:-tkris-sd}
 BRANCH=${BRANCH:-main-dev}
 
@@ -23,9 +25,15 @@ function get_script () {
   local name="$2"
   local remote_path="${3:-}"
 
-  curlwrapper -o "$local_path/$name" https://raw.githubusercontent.com/"$REPO"/teslausb/"$BRANCH"/"$remote_path"/"$name"
-  chmod +x "$local_path/$name"
-  dos2unix "$local_path/$name
+  curlwrapper -o "$TempDir/$name" https://raw.githubusercontent.com/"$REPO"/teslausb/"$BRANCH"/"$remote_path"/"$name"
+  chmod +x "$TempDir/$name"
+  dos2unix "$TempDir/$name"
+  Changes="`diff $TempDir/$name $local_path/$name`"
+  if [ -n "$Changes" ]; then
+	echo "Changes found in $name, updating local copy from github $REPO/$BRANCH"
+	cp $TempDir/$name	$local_path/$name
+  fi
+  /bin/rm -f $TempDir/$name
   #setup_progress "Downloaded $local_path/$name ..."
 }
 
