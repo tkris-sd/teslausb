@@ -32,6 +32,11 @@ function get_script () {
   Changes="`diff $TempDir/$name $local_path/$name`"
   if [ -n "$Changes" ]; then
 	echo "Changes found in $name, updating local copy from github $REPO/$BRANCH"
+	if [ "$name" == "manual_update.sh" ]; then
+		echo "CHanges to this script found, please rerun this script due to update."
+		cp $TempDir/$name	$local_path/$name
+		exit
+	fi
 	cp $TempDir/$name	$local_path/$name
 	else
 	echo "No changes found."
