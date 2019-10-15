@@ -71,8 +71,8 @@ function get_script () {
   
 # pull down copy of the setup files, jsut in case they might be handy
   
-  get_script /tmp create-backingfiles-partition.sh setup/pi
-  get_script /tmp create-backingfiles.sh setup/pi
-  get_script /tmp make-root-fs-readonly.sh setup/pi
-  get_script /tmp configure.sh setup/pi
+  #get_script /root/bin/tools create-backingfiles-partition.sh setup/pi
+  #get_script /root/bin/tools create-backingfiles.sh setup/pi
+  #get_script /root/bin/tools make-root-fs-readonly.sh setup/pi
+  #get_script /root/bin/tools configure.sh setup/pi
   /root/bin/remountfs_ro
