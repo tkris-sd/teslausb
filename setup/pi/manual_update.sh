@@ -12,10 +12,10 @@ function setup_progress () {
 
 
   function curlwrapper () {
-  setup_progress "curl -s  $@"
+  echo "curl -s  $@" >> /tmp/manual_update.log
   while ! curl -s --fail "$@"
   do
-    setup_progress "'curl $@' failed, retrying" > /dev/null
+    setup_progress "'curl $@' failed, retrying" 
     sleep 3
   done
 }
@@ -27,11 +27,14 @@ function get_script () {
 
   curlwrapper -o "$TempDir/$name" https://raw.githubusercontent.com/"$REPO"/teslausb/"$BRANCH"/"$remote_path"/"$name"
   chmod +x "$TempDir/$name"
-  dos2unix "$TempDir/$name"
+  dos2unix "$TempDir/$name" > /dev/null 2>&1
+  echo -n "Checking $name ..."
   Changes="`diff $TempDir/$name $local_path/$name`"
   if [ -n "$Changes" ]; then
 	echo "Changes found in $name, updating local copy from github $REPO/$BRANCH"
 	cp $TempDir/$name	$local_path/$name
+	else
+	echo "No changes found."
   fi
   /bin/rm -f $TempDir/$name
   #setup_progress "Downloaded $local_path/$name ..."
