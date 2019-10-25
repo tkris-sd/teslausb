@@ -93,11 +93,11 @@ if [ -z "$CIFS_Use_Rsync" ];
 	RsyncLog=/mutable/archive_rsync.log
 	# make sure both the sub dirs exist so rsync does not hit an error.
 	mkdir -p $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips > /dev/null 2>&1
-	rsync -avH --stats --ignore-existing $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips $ARCHIVE_MOUNT > $RsyncLog 2>&1
+	rsync -avH --stats --ignore-existing --remove-source-files $CAM_MOUNT/TeslaCam/SavedClips $CAM_MOUNT/TeslaCam/SentryClips $ARCHIVE_MOUNT > $RsyncLog 2>&1
 	
 	if [ $? == 0 ]; 
 	  then
-	    /bin/rm -rf $CAM_MOUNT/TeslaCam/SavedClips/* 
+	    /bin/rm -rf $CAM_MOUNT/TeslaCam/SavedClips/* $CAM_MOUNT/TeslaCam/SentryClips/*
 	  else
 	    log "Not removing SavedClips, rsync did not exit clean. Check Yo Space."
 		/root/bin/send-push-message "TeslaUSB Rsync:" "Not removing SavedClips after rsync - Check your space"
