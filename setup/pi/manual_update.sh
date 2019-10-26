@@ -29,17 +29,17 @@ function get_script () {
   chmod +x "$TempDir/$name"
   dos2unix "$TempDir/$name" > /dev/null 2>&1
   echo -n "Checking $name ..."
-  Changes="`diff $TempDir/$name $local_path/$name`"
-  if [ -n "$Changes" ]; then
+  Changes="`diff $TempDir/$name $local_path/$name | wc -l`"
+  if [ $Changes -ge 1 ]; then
 	echo "Changes found in $name, updating local copy from github $REPO/$BRANCH"
-	if [ "$name" == "manual_update.sh" ]; then
-		echo "CHanges to this script found, please rerun this script due to update."
+	  if [ "$name" == "manual_update.sh" ]; then
+		echo "Changes to this script found, please rerun this script due to update."
 		cp $TempDir/$name	$local_path/$name
 		exit
-	fi
-	cp $TempDir/$name	$local_path/$name
+	  fi
+	  cp $TempDir/$name	$local_path/$name
 	else
-	echo "No changes found."
+	  echo "No changes found."
   fi
   /bin/rm -f $TempDir/$name
   #setup_progress "Downloaded $local_path/$name ..."
