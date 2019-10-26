@@ -36,7 +36,7 @@ fi
 
 connectionmonitor $$ &
 
-if [ -z "$CIFS_Use_Rsync" ];
+if [  "${CIFS_Use_Rsync:-true}" != "true" ];
   then
 	while read file_name
 	do

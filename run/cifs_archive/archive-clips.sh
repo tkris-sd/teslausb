@@ -75,7 +75,7 @@ function moveclips() {
 
 connectionmonitor $$ &
 
-if [ -z "$CIFS_Use_Rsync" ];
+if [  "${CIFS_Use_Rsync:-true}" != "true" ];
   then
 	# new file name pattern, firmware 2019.*
 	moveclips "$CAM_MOUNT/TeslaCam/SavedClips" '*'
