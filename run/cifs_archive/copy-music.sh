@@ -15,6 +15,11 @@ function connectionmonitor {
     do
       if timeout 3 /root/bin/archive-is-reachable.sh $ARCHIVE_HOST_NAME
       then
+	  if [ -x /root/bin/tesla_api.py ]
+        then
+		  log "Sending wake command to vehicle while copy continues..."
+                /root/bin/tesla_api.py wake_up_vehicle &>> ${LOG_FILE}
+		fi
         # sleep and then continue outer loop
         sleep 5
         continue 2
