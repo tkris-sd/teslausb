@@ -19,7 +19,7 @@ function connectionmonitor {
                 /root/bin/tesla_api.py wake_up_vehicle &>> ${LOG_FILE}
 		fi
         # sleep and then continue outer loop
-        sleep 5
+        sleep 30
         continue 2
       fi
     done
