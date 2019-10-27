@@ -9,6 +9,8 @@ You can configure a Raspberry Pi Zero W so that your Tesla thinks it's a USB dri
 
 ## Improvements
 
+This for has customizations that probably only make sense to me. Please check out marcone/teslausb/releases for the active fork of this project.
+
 This fork contains the following improvements compared to the upstream [cimryan/teslausb](https://github.com/cimryan/teslausb):
 1. Supports Tesla firmware 2019.x
 1. Supports saving more than one hour of recordings
